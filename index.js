@@ -14,20 +14,27 @@ const fetchData = async (searchTerm) => {
 
 const input = document.querySelector('input');
 
-//timeoutId will be used to reference the number of a setTimout() function. Every setTimout() generates a reference number which we can use to stop the setTimout() from being executed.
-let timeoutId;
+// helper function to set a limit on how often a function can be called
+const debounce = (callback) => {
+	//stores setTimout() reference number to be used in clearTimout
+	let timeoutId;
+	// return  function
+	// get all the arguments from user input with rest parameters
+	return (...args) => {
+		// stop setTimout() from being executed if user still typing by checking if a reference timeoutId is true
+		if (timeoutId) clearTimeout(timeoutId);
 
-//function to get the user typing value
-const onInput = (event) => {
-	// clears the setTimout if user still typing in the input field.
-	if (timeoutId) clearTimeout(timeoutId);
-
-	// when user types a key, it will generate a reference number for the setTimout, with that reference we can check if the user still typing letter to search for a movie.
-	//when the user finish typing, the setTimout will not be cleared, and setTimeout will execute without being cleared.
-	timeoutId = setTimout(() => {
-		fetchData(event.target.value);
-	}, 1000);
+		// timeoutId is false setTimeout() will be executed if no user input is detected for more than 1 second.
+		timeoutId = setTimeout(() => {
+			// call calback and apply each argument passed to the callback function with .apply method
+			callback.apply(null, args);
+		}, 1000);
+	};
 };
 
+//function to get the user typing value
+const onInput = debounce((event) => {
+	fetchData(event.target.value);
+});
 //listen for every key press in the input field, and call onInput callback function
 input.addEventListener('input', onInput);
