@@ -44,6 +44,10 @@ const resultsWrapper = document.querySelector('.results');
 const onInput = async (event) => {
 	// await promise to be resolved returning the data fetched from the API
 	const movies = await fetchData(event.target.value);
+
+	//clear search value result when search for a new title
+	resultsWrapper.innerHTML = '';
+
 	// add class to open dropdown menu
 	dropdown.classList.add('is-active');
 
@@ -51,10 +55,13 @@ const onInput = async (event) => {
 	for (let movie of movies) {
 		// create a div element
 		const option = document.createElement('a');
+		// check of poster image is available, if N/A we pass a empty strgint to img src
+		const imgSrc = movie.Poster === 'N/A' ? '' : movie.Poster;
+		// add dropdown-item for movie search
 		option.classList.add('dropdown-item');
 		// create img and h1 tag inside the div element
 		option.innerHTML = `
-        <img src="${movie.Poster}" />
+        <img src="${imgSrc}" />
         ${movie.Title}
         `;
 		// append element created to HTML
