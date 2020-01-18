@@ -10,16 +10,27 @@ const fetchData = async (searchTerm) => {
 		}
 	});
 	// return only the Search property from the API object, containing the user search input value
+	console.log(response.data.Search);
 	return response.data.Search;
 };
 
 const input = document.querySelector('input');
-
 //function to get the user input value by calling debounce from Utils.js file
 const onInput = async (event) => {
 	// await promise to be resolved returning the data fetched from the API
 	const movies = await fetchData(event.target.value);
-	console.log(movies);
+	// iterate over the array of movies returned from API
+	for (let movie of movies) {
+		// create a div element
+		const div = document.createElement('div');
+		// create img and h1 tag inside the div element
+		div.innerHTML = `
+        <img src="${movie.Poster}" />
+        <h1> ${movie.Title} </h1>
+        `;
+		// append element created to HTML
+		document.querySelector('#target').appendChild(div);
+	}
 };
 //listen for every key press in the input field, and call onInput callback function with user input values and a time for the setTimeout() to be executed
 input.addEventListener('input', debounce(onInput, 700));
