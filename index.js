@@ -45,7 +45,7 @@ const onInput = async (event) => {
 	const movies = await fetchData(event.target.value);
 	// if user clear the search input, remove dropdown and return function
 	if (!movies.length) {
-		dropdown.classList.add('is-active');
+		dropdown.classList.remove('is-active');
 		return;
 	}
 	//clear search value result when search for a new title
@@ -97,5 +97,26 @@ const onMovieSelect = async (movie) => {
 			i: movie.imdbID
 		}
 	});
-	console.log(response.data);
+	//create movie summary by calling movieTemplate and passing the movie ID
+	document.querySelector('#summary').innerHTML = movieTemplate(response.data);
+};
+
+// HTML template to render movie summary from user selection
+const movieTemplate = (movieDetail) => {
+	return `
+	<article class="media">
+		<figure class="media-left">
+			<p class="image">
+				<img class="image" src="${movieDetail.Poster}" />
+			</p>
+		</figure>
+		<div class="media-content">
+			<div class="content">
+				<h1>${movieDetail.Title}</h1>
+				<h4>${movieDetail.Genre}</h4>
+				<p>${movieDetail.Plot}</p>
+			</div>
+		<div>
+	</article>
+	`;
 };
