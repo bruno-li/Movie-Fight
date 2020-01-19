@@ -72,3 +72,8 @@ const onInput = async (event) => {
 //***** EVENT LISTENERS */
 //listen for every key press in the input field, and call onInput callback function with user input values and a time for the setTimeout() to be executed
 input.addEventListener('input', debounce(onInput, 700));
+
+// event listener  if user clicks within  div.autocomplete class. If user clicks outside of that block, remove the class is-active and close the dropdown menu. contains( ) method checks if user is clicking within the element, so it will not close the dropdown as long as user clicks within that block.
+document.addEventListener('click', (event) => {
+	if (!root.contains(event.target)) dropdown.classList.remove('is-active');
+});
