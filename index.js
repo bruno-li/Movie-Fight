@@ -10,12 +10,11 @@ const fetchData = async (searchTerm) => {
 			s: searchTerm
 		}
 	});
-
+	// return empty if error
 	if (response.data.Error) {
 		return [];
 	}
-
-	// return only the Search property from the API object, containing the user search input value
+	// return  Search API object property containing  user search value
 	console.log(response.data.Search);
 	return response.data.Search;
 };
@@ -40,22 +39,24 @@ const dropdown = document.querySelector('.dropdown');
 const resultsWrapper = document.querySelector('.results');
 
 //**** FUNCTIONS */
-//function to get the user input value by calling debounce from Utils.js file
+//get user input value by calling debounce from Utils.js file
 const onInput = async (event) => {
 	// await promise to be resolved returning the data fetched from the API
 	const movies = await fetchData(event.target.value);
-
+	// if user clear the search input, remove dropdown and return function
+	if (!movies.length) {
+		dropdown.classList.add('is-active');
+		return;
+	}
 	//clear search value result when search for a new title
 	resultsWrapper.innerHTML = '';
-
 	// add class to open dropdown menu
 	dropdown.classList.add('is-active');
-
 	// iterate over the array of movies returned from API
 	for (let movie of movies) {
 		// create a div element
 		const option = document.createElement('a');
-		// check of poster image is available, if N/A we pass a empty strgint to img src
+		// check of if poster image N/A
 		const imgSrc = movie.Poster === 'N/A' ? '' : movie.Poster;
 		// add dropdown-item for movie search
 		option.classList.add('dropdown-item');
@@ -64,16 +65,37 @@ const onInput = async (event) => {
         <img src="${imgSrc}" />
         ${movie.Title}
         `;
+		option.addEventListener('click', () => {
+			// close dropdown when user select a movie from list
+			dropdown.classList.remove('is-active');
+			// fill search with user select movie
+			input.value = movie.Title;
+			// call function passing user select movie
+			onMovieSelect(movie);
+		});
 		// append element created to HTML
 		resultsWrapper.appendChild(option);
 	}
 };
 
 //***** EVENT LISTENERS */
-//listen for every key press in the input field, and call onInput callback function with user input values and a time for the setTimeout() to be executed
+//listen for input key press and call onInput callback function with user input values and a time for the setTimeout()
 input.addEventListener('input', debounce(onInput, 700));
 
-// event listener  if user clicks within  div.autocomplete class. If user clicks outside of that block, remove the class is-active and close the dropdown menu. contains( ) method checks if user is clicking within the element, so it will not close the dropdown as long as user clicks within that block.
+// check if user clicks within  div.autocomplete class. If user clicks outside, remove the class is-active and close the dropdown menu. The contains( ) method checks if user is click within the element, so it will not close the dropdown as long as user clicks within that block.
 document.addEventListener('click', (event) => {
 	if (!root.contains(event.target)) dropdown.classList.remove('is-active');
 });
+
+// get the user select movie from dropdown menu list
+const onMovieSelect = async (movie) => {
+	const response = await axios.get('http://www.omdbapi.com/', {
+		// use axios to pass an object parameters for the api
+		params: {
+			apiKey: '7cab3882',
+			//property, from the API documentation to look individual movie
+			i: movie.imdbID
+		}
+	});
+	console.log(response.data);
+};
