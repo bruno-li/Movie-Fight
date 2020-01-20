@@ -1,5 +1,4 @@
 // helper function to set a limit on how often a function can be called
-// default delay of 1s if no time is passed as an argument
 const debounce = (callback, delay = 1000) => {
 	//stores setTimout() reference number to be used in clearTimout
 	let timeoutId;
