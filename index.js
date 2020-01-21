@@ -1,26 +1,5 @@
-//****** API CALL  */
-//helper function to fetch data from API using Axios
-// search for user input value
-const fetchData = async (searchTerm) => {
-	const response = await axios.get('http://www.omdbapi.com/', {
-		// use axios to pass an object parameters for the api
-		params: {
-			apiKey: '7cab3882',
-			//property, from the API documentation to look up a movie
-			s: searchTerm
-		}
-	});
-	// return empty if error
-	if (response.data.Error) {
-		return [];
-	}
-	// return  Search API object property containing  user search value
-	return response.data.Search;
-};
-
-// call createAutoComplete config function object, specific for this application
-createAutoComplete({
-	root: document.querySelector('.autocomplete'),
+//******* OBJECT  ******/
+const autocompleteConfig = {
 	//method to render movie poster
 	renderOption: (movie) => {
 		// check of if poster image N/A
@@ -31,6 +10,8 @@ createAutoComplete({
              `;
 	},
 	onOptionSelect: (movie) => {
+		// hides helper when user selects a movie
+		document.querySelector('.tutorial').classList.add('is-hidden');
 		// call onMovieSelect from utils.js passing the select movie
 		onMovieSelect(movie);
 	},
@@ -55,10 +36,25 @@ createAutoComplete({
 		// return  Search API object property containing  user search value
 		return response.data.Search;
 	}
+};
+
+//**** FUNCTION CALL ****/
+// call function to create left search column
+createAutoComplete({
+	// spread operator to copies properties from autoComplete object
+	...autocompleteConfig,
+	root: document.querySelector('#left-autocomplete')
+});
+// call function to create right search column
+createAutoComplete({
+	// spread operator to copies properties from autoComplete object
+	...autocompleteConfig,
+	root: document.querySelector('#right-autocomplete')
 });
 
-// get the user select movie from dropdown menu list
+//****** API CALL  *****/
 const onMovieSelect = async (movie) => {
+	// Async with Axios library
 	const response = await axios.get('http://www.omdbapi.com/', {
 		// use axios to pass an object parameters for the api
 		params: {
