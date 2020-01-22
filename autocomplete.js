@@ -18,19 +18,18 @@ const createAutoComplete = ({ root, renderOption, onOptionSelect, inputValue, fe
 	const dropdown = root.querySelector('.dropdown');
 	const resultsWrapper = root.querySelector('.results');
 
-	//**** FUNCTIONS ******/
 	//get user input value by calling debounce from Utils.js file
 	const onInput = async (event) => {
-		// await promise to be resolved returning the data fetched from the API by calling fetchData method from index.js
-
+		// await promise to be resolved returning the data fetched from the API by calling fetchData from index.js
 		const items = await fetchData(event.target.value);
-		// if user clear the search input, remove dropdown and return function
+
+		// if user clear the search input, remove dropdown
 		if (!items.length) {
 			dropdown.classList.remove('is-active');
 			return;
 		}
 
-		//clear search value result when search for a new title
+		//empty search value result when search for a new movie
 		resultsWrapper.innerHTML = '';
 
 		// add class to open dropdown menu

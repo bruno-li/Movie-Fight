@@ -2,15 +2,14 @@
 const debounce = (callback, delay = 1000) => {
 	//stores setTimout() reference number to be used in clearTimout
 	let timeoutId;
-	// return  function
-	// get all the arguments from user input with rest parameters
+	// function get all the arguments from user input with rest parameters
 	return (...args) => {
 		// stop setTimout() from being executed if user still typing by checking if a reference timeoutId is true
 		if (timeoutId) clearTimeout(timeoutId);
 
 		// timeoutId is false setTimeout() will be executed if no user input is detected for more than 1 second.
 		timeoutId = setTimeout(() => {
-			// call calback and apply each argument passed to the callback function with .apply method
+			// use apply to keep track of how many args to pass to callback. Each key press is stored in args as an array from input search field then pass each argument as arguments array to callback function to look up a movie
 			callback.apply(null, args);
 		}, delay);
 	};

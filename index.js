@@ -9,16 +9,12 @@ const autocompleteConfig = {
             ${movie.Title} (${movie.Year})
              `;
 	},
-	onOptionSelect: (movie) => {
-		// hides helper when user selects a movie
-		document.querySelector('.tutorial').classList.add('is-hidden');
-		// call onMovieSelect from utils.js passing the select movie
-		onMovieSelect(movie);
-	},
+
 	//get user input and assign to input field
 	inputValue: (movie) => {
 		return movie.Title;
 	},
+	//****** API CALL  *****/
 	// pass fetchData as an argument to autocomplete file
 	async fetchData(searchTerm) {
 		const response = await axios.get('http://www.omdbapi.com/', {
@@ -41,19 +37,38 @@ const autocompleteConfig = {
 //**** FUNCTION CALL ****/
 // call function to create left search column
 createAutoComplete({
-	// spread operator to copies properties from autoComplete object
+	// spread operator to copies properties from autoComplete object and pass it to autocomplete.js
 	...autocompleteConfig,
-	root: document.querySelector('#left-autocomplete')
+	// select left search
+	root: document.querySelector('#left-autocomplete'),
+
+	onOptionSelect: (movie) => {
+		// hides helper when user selects a movie
+		document.querySelector('.tutorial').classList.add('is-hidden');
+		// call onMovieSelect from utils.js passing the select movie
+		onMovieSelect(movie, document.querySelector('#left-summary'), 'left');
+	}
 });
 // call function to create right search column
 createAutoComplete({
-	// spread operator to copies properties from autoComplete object
+	// spread operator to copies properties from autoComplete object and pass it to autocomplete.js
 	...autocompleteConfig,
-	root: document.querySelector('#right-autocomplete')
+	root: document.querySelector('#right-autocomplete'),
+
+	onOptionSelect: (movie) => {
+		// hides helper when user selects a movie
+		document.querySelector('.tutorial').classList.add('is-hidden');
+		// call onMovieSelect with select movie and element for summary
+		onMovieSelect(movie, document.querySelector('#right-summary'), 'right');
+	}
 });
+// variables to keep track of select movies
+let leftMovie;
+let rightMovie;
 
 //****** API CALL  *****/
-const onMovieSelect = async (movie) => {
+// receive a movie object and the element for the summary
+const onMovieSelect = async (movie, summaryElement, side) => {
 	// Async with Axios library
 	const response = await axios.get('http://www.omdbapi.com/', {
 		// use axios to pass an object parameters for the api
@@ -63,8 +78,25 @@ const onMovieSelect = async (movie) => {
 			i: movie.imdbID
 		}
 	});
-	//create movie summary by calling movieTemplate and passing the movie ID
-	document.querySelector('#summary').innerHTML = movieTemplate(response.data);
+	//create movie summary by calling movieTemplate
+	summaryElement.innerHTML = movieTemplate(response.data);
+
+	// check if left or right summary was called
+	if (side === 'left') {
+		// assign movie to left summary
+		leftMovie = response.data;
+	} else {
+		// assign movie to right summary
+		rightMovie = response.data;
+	}
+	// make sure both summary sides have movies select to run comparison
+	if (leftMovie && rightMovie) {
+		runComparison();
+	}
+};
+
+const runComparison = () => {
+	console.log('Time for comparison');
 };
 
 // HTML template to render movie summary from user selection
