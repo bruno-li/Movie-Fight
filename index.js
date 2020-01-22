@@ -101,6 +101,13 @@ const runComparison = () => {
 
 // HTML template to render movie summary from user selection
 const movieTemplate = (movieDetail) => {
+	// get values, remove the dollar sign and commas
+	// then parse to an intenger for comparison
+	const dollars = parseInt(movieDetail.BoxOffice.replace(/\$/g, '').replace(/,/g, ''));
+	const metascore = parseInt(movieDetail.Metascore);
+	const imdbRating = parseFloat(movieDetail.imdbRating);
+	const imdbVotes = parseInt(movieDetail.imdbVotes.replace(/,/g, ''));
+
 	return `
 	<article class="media">
 		<figure class="media-left">
